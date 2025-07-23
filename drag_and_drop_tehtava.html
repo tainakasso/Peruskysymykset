@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag and Drop -tehtävä</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin-top: 20px;
+        }
+        .questions, .answers {
+            width: 45%;
+        }
+        .box {
+            background-color: #d0e4f5;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px 0;
+            min-height: 40px;
+        }
+        .answer-box {
+            background-color: #d5f5d0;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: grab;
+        }
+        .drop-target {
+            border: 2px dashed #aaa;
+            min-height: 40px;
+        }
+        .incorrect {
+            background-color: #f8d7da !important;
+        }
+        #checkButton {
+            background-color: #66b2b2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        #score {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Yhdistä kysymys ja vastaus</h2>
+    <div class="container">
+        <div class="questions">
+
+            <div class="box" id="q0">
+                Kuka sinä olet?
+                <div class="drop-target" ondrop="drop(event)" ondragover="allowDrop(event)" data-answer="Olen Pekka Korhonen."></div>
+            </div>
+    
+            <div class="box" id="q1">
+                Minkä maalainen sinä olet?
+                <div class="drop-target" ondrop="drop(event)" ondragover="allowDrop(event)" data-answer="Olen suomalainen."></div>
+            </div>
+    
+            <div class="box" id="q2">
+                Mitä kieltä sinä puhut?
+                <div class="drop-target" ondrop="drop(event)" ondragover="allowDrop(event)" data-answer="Puhun suomea ja vähän englantia."></div>
+            </div>
+    
+            <div class="box" id="q3">
+                Missä sinä asut?
+                <div class="drop-target" ondrop="drop(event)" ondragover="allowDrop(event)" data-answer="Asun Helsingissä."></div>
+            </div>
+    
+            <div class="box" id="q4">
+                Mikä sinun osoite on?
+                <div class="drop-target" ondrop="drop(event)" ondragover="allowDrop(event)" data-answer="Kotikatu 5 C 10, 00500 Helsinki."></div>
+            </div>
+    
+            <div class="box" id="q5">
+                Kuinka vanha sinä olet?
+                <div class="drop-target" ondrop="drop(event)" ondragover="allowDrop(event)" data-answer="Olen 32 vuotta."></div>
+            </div>
+    
+        </div>
+        <div class="answers">
+
+            <div class="answer-box" id="a0" draggable="true" ondragstart="drag(event)">
+                Olen suomalainen.
+            </div>
+    
+            <div class="answer-box" id="a1" draggable="true" ondragstart="drag(event)">
+                Asun Helsingissä.
+            </div>
+    
+            <div class="answer-box" id="a2" draggable="true" ondragstart="drag(event)">
+                Olen Pekka Korhonen.
+            </div>
+    
+            <div class="answer-box" id="a3" draggable="true" ondragstart="drag(event)">
+                Olen 32 vuotta.
+            </div>
+    
+            <div class="answer-box" id="a4" draggable="true" ondragstart="drag(event)">
+                Puhun suomea ja vähän englantia.
+            </div>
+    
+            <div class="answer-box" id="a5" draggable="true" ondragstart="drag(event)">
+                Kotikatu 5 C 10, 00500 Helsinki.
+            </div>
+    
+        </div>
+    </div>
+    <button id="checkButton" onclick="checkAnswers()">Tarkista</button>
+    <div id="score"></div>
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var draggedElement = document.getElementById(data);
+            if (ev.target.classList.contains("drop-target")) {
+                ev.target.innerHTML = "";
+                ev.target.appendChild(draggedElement);
+            }
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const targets = document.querySelectorAll(".drop-target");
+            targets.forEach(target => {
+                const correctAnswer = target.getAttribute("data-answer");
+                const dropped = target.querySelector(".answer-box");
+                if (dropped && dropped.textContent.trim() === correctAnswer) {
+                    score += 1;
+                    target.classList.remove("incorrect");
+                } else {
+                    target.classList.add("incorrect");
+                }
+            });
+            document.getElementById("score").innerText = "Pisteet: " + score + " / " + targets.length;
+        }
+    </script>
+</body>
+</html>
